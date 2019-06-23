@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #move {
+      float: left;
+      width: 300px;
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #shadow {
+      height: 40px;
+      width: 60px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: rgba(200, 200, 200, 0.5);
+      cursor: pointer;
+    }
+
+    .container {
+      width: 600px;
+      height: 400px;
+      float: left;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #big {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div id="move">
+  <img id="small" width="300" height="200" src="./assets/img/b2.jpg">
+
+  <div id="shadow"></div>
+</div>
+<div class="container">
+  <img id="big" width="3000" height="2000" src="./assets/img/b2.jpg">
+</div>
+<script src="iwenEvent.js"></script>
+<script>
+  iwenEvent.event.on('move', 'mousemove', function (e) {
+    var e = iwenEvent.event.getEvent(e)
+    var x = e.clientX - 30;
+    var y = e.clientY - 20;
+    if (x < 0) {
+      x = 0;
+    } else if (x > 240) {
+      x = 240;
+    }
+    if (y < 0) {
+      y = 0;
+    } else if (y > 160) {
+      y = 160;
+    }
+    iwenEvent.dom.css("big","display","block");
+    iwenEvent.dom.css('shadow', 'left', x + 'px');
+    iwenEvent.dom.css('shadow', 'top', y + 'px');
+    iwenEvent.dom.css('big', 'left', -x * 10 + 'px');
+    iwenEvent.dom.css('big', 'top', -y * 10 + 'px');
+  })
+  iwenEvent.event.on("move","mouseout",function(e){
+    iwenEvent.dom.css("big","display","none");
+  })
+</script>
+</body>
+</html>

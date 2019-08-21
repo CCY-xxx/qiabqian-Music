@@ -2,7 +2,9 @@
   <div class="music-nav">
     <div class="log url hd">
       <h2>音乐榜单</h2>
-      <div>更多</div>
+        <router-link class="" :to="{name:'Listcate'}" tag="div">
+          更多
+        </router-link>
     </div>
     <ul>
       <li>

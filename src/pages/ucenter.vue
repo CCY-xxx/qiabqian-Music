@@ -4,7 +4,7 @@
       <input type="button" @click="flag=!flag" value="编辑" class="edit">
       <input type="button" value="删除" @click="deleteone" class="del" v-show="flag">
 
-      <i v-show="flag">全选</i><input type="checkbox" ref="all" @click="checkall" v-show="flag" class="all"></div>
+      <i v-show="flag">全选</i><input type="checkbox" ref="all" @click="checkall" v-show="flag" v-model="tabox" class="all"></div>
     <div class="container">
       <div class="gallery">
 
@@ -28,6 +28,7 @@
   export default {
     data() {
       return {
+        tabox:'',
         currentUrl:[],
             value:'1',
             shouArr:[],
@@ -80,18 +81,24 @@
       },
           chec(id){
 
-              var checAll=this.$refs.inpu[id].value;
-            const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + checAll;
+              var musicId=this.$refs.inpu[id].value;
+               console.log(this.$refs.inpu[id].checked)
+               const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + musicId
             this.$axios.get(playUrl)
               .then(res => {
                 console.log(res.data);
+                if(this.$refs.inpu[id].checked){
                 this.currentUrl.push(res.data);
+                }else{
+                  this.currentUrl= this.currentUrl.filter(item=>item.songinfo.song_id!==musicId);
+                  console.log(this.currentUrl)
+                }
+                
               })
               .catch(error => {
                 console.log(error);
               })
-
-          }
+          }   
     },
     computed: {},
     components: {}

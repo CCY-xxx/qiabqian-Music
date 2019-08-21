@@ -60,6 +60,7 @@ export default new Router({
         },
         {
           path:'listcate',
+          name:'Listcate',
           component:ListCate
         },
         {

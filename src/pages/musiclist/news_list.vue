@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <MusicList :url="url"></MusicList>
+    <MusicList :url="url" :type="type" title="新歌速递"></MusicList>
   </div>
 </template>
 <script>
@@ -8,7 +8,8 @@
   export default {
     data() {
       return {
-        url:"/v1/restserver/ting?method=baidu.ting.billboard.billList&type=1&size=5&offset=0"
+        type:2,
+        url:"/v1/restserver/ting?method=baidu.ting.billboard.billList&type=2&size=5&offset=0"
       }
     },
     methods: {},

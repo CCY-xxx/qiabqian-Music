@@ -2,9 +2,9 @@
   <div class="mod-albums">
     <div class="hd log url">
       <h2>新歌速递</h2>
-      <div>
-        更多
-      </div>
+       <router-link class="" :to="{name:'MoreList',params:{musictype:type,title:title}}" tag="div">
+          更多
+        </router-link>
     </div>
     <div class="container">
       <div class="gallery">
@@ -26,6 +26,8 @@
     name:"newsMusic",
     data() {
       return {
+        type:2,
+        title:'新歌速递',
         newsMusic:[]
       }
     },

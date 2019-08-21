@@ -2,14 +2,14 @@
     <div class="mod-albums">
       <div class="hd log url">
         <h2>{{title}}</h2>
-        <router-link class="" :to="{name:'MoreList',params:{musictype:this.type,title:title}}" tag="div">
+        <router-link class="" :to="{name:'MoreList',params:{musictype:type,title:title}}" tag="div">
           更多
         </router-link>
       </div>
         <div class="container">
           <div class="gallery">
             <div class="scroller">
-              <router-link :to="{name:'MusicPlay',params:{songid:item.song_id,type:1}}" tag="div" class="card url" v-for="(item,index) in todayRecommend" :key="index">
+              <router-link :to="{name:'MusicPlay',params:{songid:item.song_id,type:type}}" tag="div" class="card url" v-for="(item,index) in todayRecommend" :key="index">
                 <div class="album">
                   <img :src="item.pic_big" :alt="item.title">
                   <div class="name">{{item.title}}</div>
@@ -35,7 +35,6 @@
         },
        type: {
           type: String,
-          default:"1"
         }
         },
 

@@ -38,9 +38,13 @@
               keyArr:[]
             }
         },
-        mounted(){
+        created(){
+          console.log(this.songid)
           this.loadMusic();
 
+        },
+        mounted(){
+          
       },
       // watch: {
       //   songid: {
@@ -62,7 +66,12 @@
             console.log(this.songid);
             // this.songid = JSON.parse(localStorage.getItem('daqq'));
             var data = await api.get(LRCUrl)
-            var lyrics = data.lrcContent.split("\n");
+            if(!data.lrcContent){
+           
+            this.lrcData={}
+            return
+            }
+             var lyrics = data.lrcContent.split("\n");
             var lrcObj = {};
             for (var i = 0; i < lyrics.length; i++) {
               var lyric = decodeURIComponent(lyrics[i]);
@@ -87,6 +96,11 @@
               this.keyArr.push(i);
             }
             // console.log(this.keyArr);
+          }
+        },
+        watch:{
+          songid(){
+            this.loadMusic()
           }
         },
         components: {}

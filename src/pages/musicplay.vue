@@ -25,11 +25,12 @@
 
       </div>
       <div class="iconbox">
+    
         <div :class="{love:flag}" @click="chenge"><i @click="emitNew()" class="iconfont icon-shoucang2 left"></i></div>
         <i class="box">
           <button type="button" class="pre" @click="pre">上一曲</button>
           <button @click="stopMusic">播放/暂停</button>
-          <button type="button" class="next" @click="nextMusic">下一曲</button>
+          <button type="button" class="next" @click="next">下一曲</button>
         </i>
         <i class="iconfont icon-xiazai right"></i>
       </div>
@@ -74,22 +75,45 @@
 
         },
         store,
-        watch:{
-
-          //处理点击下一曲或上一曲第一次无效问题（但是又出了新问题。。。还未解决）
-          ind(){
-          
-            this.nextMusic()
-           
-          },
-          ins(){
-            this.pre()
-          }
+        // watch:{
+        //   //处理点击下一曲或上一曲第一次无效问题（但是又出了新问题。。。还未解决）
+        //   ind(){
+        //     this.nextMusic()
+        //   },
+        //   ins(){
+        //     this.pre()
+        //   }
             
-        },
+        // },
       mounted(){
-     
-          //获取某分类的音乐列表
+       //获取初始音乐
+        const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + this.musicId;
+        this.$axios.get(playUrl)
+          .then(res => {
+            console.log(res.data);
+            this.currentUrl = res.data;
+       
+            // console.log(this.$store.state.attrrs);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        
+       setTimeout(()=>{
+         
+           this.addEventListeners();
+      
+       },1000)
+      this.getatt()
+      
+      },
+      beforeDestroyed(){
+        this.removeEventListeners();
+      },
+        methods: {
+      
+        getatt(){
+              //获取某分类的音乐列表
          const cateUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.billboard.billList&type=" + this.$route.params.type + "&size=50&offset=0"
             api.get(cateUrl).then((data)=>{
               console.log(data.song_list);
@@ -101,32 +125,7 @@
             console.log(this.index)
             })
            
-        //获取初始音乐
-        const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + this.musicId;
-        this.$axios.get(playUrl)
-          .then(res => {
-            console.log(res.data);
-            this.currentUrl = res.data;
-          
-            // console.log(this.$store.state.attrrs);
-          })
-          .catch(error => {
-            console.log(error);
-          })
-        this.addEventListeners();
-         
-      },
-      beforeDestroyed(){
-        this.removeEventListeners();
-      },
-        methods: {
-        //  async saveStore(){
-        //        const cateUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.billboard.billList&type=" + this.$route.params.type + "&size=10&offset=0"
-        //     let data = await api.get(cateUrl)
-        //     console.log(data.song_list);
-        //     this.$store.state.attrrs = data.song_list;
-        //     console.log( this.$store.state.attrrs)
-        //   },
+        },
           reqData() {
             const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + this.musicId;
             this.$axios.get(playUrl)
@@ -171,54 +170,46 @@
             this.durationTime = this.$refs.player.duration
             // duration是audio标签提供的获得歌曲播放整体时间的方法
           },
-          async nextMusic() {
-          this.ind=0
-            // console.log( this.$store.state.attrrs)
-            // this.index=data.song_list.length;
-            if(this.index<this.att.length){
-                 var id = this.att[this.index++].song_id
-            }else{
-              this.index == this.att.length-1
-              var id = this.att[this.index].song_id
-            }
-             
-            if (this.index == this.att.length) {
+          next(){
+            var count=++this.index
+               if(count<this.att.length){
+                this.musicId = this.att[count].song_id
+                console.log('6')
+            }else if(count == this.att.length) {
+                console.log('4')
               this.index = 0
-              id = this.att[this.index].song_id
+             this.musicId = this.att[this.index].song_id
             }
-          
-            const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + id;
-            let da = await api.get(playUrl)
+            // console.log(this.musicId)
+            this.toggleMusic()
+          },
+          async toggleMusic() {
+            const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + this.musicId;
+             this.currentUrl = await api.get(playUrl)
             // this.currentUrl.songinfo.song_id=JSON.parse(localStorage.getItem('daqq'));
-            this.currentUrl = da;
-            this.musicId=this.currentUrl.songinfo.song_id
-            console.log(this.$route.params.songid)
+            // this.currentUrl = da;
+            // this.musicId=this.currentUrl.songinfo.song_id
+            // console.log(this.$route.params.songid)
             // console.log(da.songinfo.song_id)
             console.log(this.musicId)
 
             // localStorage.setItem('daqq',JSON.stringify( this.currentUrl.songinfo.song_id))
             //           this.addEventListeners();
+            // this.addEventListeners();
           },
-          async pre() {
-              this.ins=0
-              if(this.index>0){
-                   var id= this.att[this.index--].song_id;
-                
+          pre() {
+              // this.ins=0
+              var preCount=--this.index
+              if(preCount>=0){
+                    this.musicId= this.att[preCount].song_id;
+                 console.log('7')
               }else{
+                 console.log('1')
                  this.index = this.att.length-1;
-                   var id= this.att[this.index].song_id;
+                    this.musicId= this.att[this.index].song_id;
               }
             
-            if (this.index < 0) {
-              this.index = this.att.length-1;
-              id= this.att[this.index].song_id;
-            }
-         
-            const playUrl = this.HOST + "/v1/restserver/ting?method=baidu.ting.song.play&songid=" + id
-            let wer = await api.get(playUrl)
-            // this.currentUrl.songinfo.song_id=JSON.parse(localStorage.getItem('daqq'));
-            this.currentUrl = wer;
-              this.musicId=this.currentUrl.songinfo.song_id
+          this.toggleMusic()
           },
           stopMusic() {
             if (!this.fag) {
@@ -246,7 +237,7 @@
 </script>
 <style scoped>
   .header{
-    height: 124px;
+    height: 60px;
     padding:0 15px;
   }
 .love{
@@ -300,9 +291,14 @@
 
   .iconbox .box{
     flex: 1;
+     display: flex;
+     flex-wrap: wrap;
+    align-content: flex-center;
+    align-items: center;
+    justify-content: space-around;
   }
 .box button{
-  margin-left: 20px;
+  margin-left:3px;
   padding: 10px;
   border-radius: 50%;
   outline: none;
